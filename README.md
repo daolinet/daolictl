@@ -12,4 +12,4 @@ Daolictl is an api client for calling daolinet api server.
 
 #### Usage
 
-[UserGuide.md](../../daolinet/master/docs/中文安装文档.md)
+[UserGuide.md](https://github.com/daolinet/daolinet/blob/master/docs/%E4%B8%AD%E6%96%87%E5%AE%89%E8%A3%85%E6%96%87%E6%A1%A3.md)
