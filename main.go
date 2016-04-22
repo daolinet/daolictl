@@ -24,7 +24,7 @@ func main() {
 		help := "\nCommands:\n"
 
 		for _, cmd := range globalCommands {
-			help += fmt.Sprintf("    %-10.10s%s\n", cmd.Name, cmd.Description)
+			help += fmt.Sprintf("    %-12.10s%s\n", cmd.Name, cmd.Description)
 		}
 
 		help += "\nRun 'daolictl COMMAND --help' for more information on a command."

@@ -2,53 +2,28 @@ package client
 
 import (
 	"fmt"
-	"strings"
-	"text/tabwriter"
+	/*"strings"
+	"text/tabwriter"*/
 
 	Cli "github.com/daolinet/daolictl/cli"
 )
 
+const (
+	CONNECTED    = "ACCEPT"
+	DISCONNECTED = "DROP"
+)
+
 // Usage: daolictl policy
-func (cli *DaoliCli) CmdPolicy(args ...string) error {
+/*func (cli *DaoliCli) CmdPolicy(args ...string) error {
 	cmd := Cli.Subcmd("policy", []string{"COMMAND [OPTIONS]"}, policyUsage(), false)
 	err := ParseFlags(cmd, args, true)
 	cmd.Usage()
 	return err
-}
+}*/
 
-////Usage: daolictl policy list
-//func (cli *DaoliCli) CmdPolicyList(args ...string) error {
-//	cmd := Cli.Subcmd("policy list", nil, "Lists policies", true)
-//Usage: daolictl cutls
-func (cli *DaoliCli) CmdCutls(args ...string) error {
-	cmd := Cli.Subcmd("cutls", nil, Cli.GlobalCommands["cutls"].Description, true)
-	if err := ParseFlags(cmd, args, true); err != nil {
-		return err
-	}
-
-	polis, err := cli.client.PolicyList()
-	if err != nil {
-		return err
-	}
-
-	wr := tabwriter.NewWriter(cli.out, 20, 1, 3, ' ', 0)
-	for _, p := range polis {
-		parts := strings.Split(p, ":")
-		if len(parts) == 2 {
-			fmt.Fprintf(wr, "%s\t%s\t", parts[0], parts[1])
-			fmt.Fprintf(wr, "\n")
-		}
-	}
-	wr.Flush()
-	return nil
-}
-
-//// Usage: daolictl policy create <CONTAINER:CONTAINER>
-//func (cli *DaoliCli) CmdPolicyCreate(args ...string) error {
-//	cmd := Cli.Subcmd("policy create", []string{"CONTAINER:CONTAINER"}, "Creates a policy with container peer", false)
-// Usage: daolictl cut <CONTAINER:CONTAINER>
-func (cli *DaoliCli) CmdCut(args ...string) error {
-	cmd := Cli.Subcmd("cut", []string{"CONTAINER:CONTAINER"}, Cli.GlobalCommands["cut"].Description, true)
+//Usage: daolictl show <CONTAINER:CONTAINER>
+func (cli *DaoliCli) CmdShow(args ...string) error {
+	cmd := Cli.Subcmd("show", []string{"CONTAINER:CONTAINER"}, Cli.GlobalCommands["show"].Description, true)
 	if err := ParseFlags(cmd, args, true); err != nil {
 		return err
 	}
@@ -58,20 +33,23 @@ func (cli *DaoliCli) CmdCut(args ...string) error {
 		return nil
 	}
 
-	err := cli.client.PolicyCreate(cmd.Arg(0))
+	status, err := cli.client.PolicyShow(cmd.Arg(0))
 	if err != nil {
 		return err
 	}
-	fmt.Fprintf(cli.out, "%s\n", cmd.Arg(0))
+
+	if status == CONNECTED {
+		fmt.Fprintf(cli.out, "%s\n", "CONNECTED")
+	} else if status == DISCONNECTED {
+		fmt.Fprintf(cli.out, "%s\n", "DISCONNECTED")
+	}
+
 	return nil
 }
 
-//// Usage: daolictl policy delete <CONTAINER:CONTAINER>
-//func (cli *DaoliCli) CmdPolicyDelete(args ...string) error {
-//	cmd := Cli.Subcmd("policy delete", []string{"CONTAINER:CONTAINER"}, "Delete a policy with container peer", false)
-// Usage: daolictl uncut <CONTAINER:CONTAINER>
-func (cli *DaoliCli) CmdUncut(args ...string) error {
-	cmd := Cli.Subcmd("uncut", []string{"CONTAINER:CONTAINER"}, Cli.GlobalCommands["uncut"].Description, true)
+// Usage: daolictl clear <CONTAINER:CONTAINER>
+func (cli *DaoliCli) CmdClear(args ...string) error {
+	cmd := Cli.Subcmd("clear", []string{"CONTAINER:CONTAINER"}, Cli.GlobalCommands["clear"].Description, true)
 	if err := ParseFlags(cmd, args, true); err != nil {
 		return err
 	}
@@ -85,11 +63,52 @@ func (cli *DaoliCli) CmdUncut(args ...string) error {
 	if err != nil {
 		return err
 	}
+
 	fmt.Fprintf(cli.out, "%s\n", cmd.Arg(0))
 	return nil
 }
 
-func policyUsage() string {
+// Usage: daolictl connect <CONTAINER:CONTAINER>
+func (cli *DaoliCli) CmdConnect(args ...string) error {
+	cmd := Cli.Subcmd("connect", []string{"CONTAINER:CONTAINER"}, Cli.GlobalCommands["connect"].Description, true)
+	if err := ParseFlags(cmd, args, true); err != nil {
+		return err
+	}
+
+	if len(cmd.Args()) <= 0 {
+		cmd.Usage()
+		return nil
+	}
+
+	err := cli.client.PolicyUpdate(cmd.Arg(0), CONNECTED)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(cli.out, "%s\n", "CONNECTED")
+	return nil
+}
+
+// Usage: daolictl disconnect <CONTAINER:CONTAINER>
+func (cli *DaoliCli) CmdDisconnect(args ...string) error {
+	cmd := Cli.Subcmd("disconnect", []string{"CONTAINER:CONTAINER"}, Cli.GlobalCommands["disconnect"].Description, true)
+	if err := ParseFlags(cmd, args, true); err != nil {
+		return err
+	}
+
+	if len(cmd.Args()) <= 0 {
+		cmd.Usage()
+		return nil
+	}
+
+	err := cli.client.PolicyUpdate(cmd.Arg(0), DISCONNECTED)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(cli.out, "%s\n", "DISCONNECTED")
+	return nil
+}
+
+/*func policyUsage() string {
 	policyCommands := map[string]string{
 		"list":   "List all policy",
 		"create": "Create a rule",
@@ -104,4 +123,4 @@ func policyUsage() string {
 
 	help += fmt.Sprintf("\nRun 'daolictl policy COMMAND --help' for more information on a command.")
 	return help
-}
+}*/

@@ -10,8 +10,8 @@ type APIClient interface {
 	GroupDelete(string) error
 	MemberAdd(string, string) error
 	MemberRemove(string, string) error
-	PolicyList() ([]string, error)
-	PolicyCreate(string) error
+	PolicyShow(string) (string, error)
+	PolicyUpdate(string, string) error
 	PolicyDelete(string) error
 	FirewallList() ([]Firewall, error)
 	FirewallShow(string) ([]Firewall, error)

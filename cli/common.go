@@ -35,9 +35,13 @@ var globalCommands = []Command{
 	{"group", "Group management"},
 	{"member", "Group member management"},
 	//{"policy", "Policy management"},
-	{"cut", "Do container isolation"},
-	{"cutls", "List all cuts"},
-	{"uncut", "Undo container isolation"},
+	//{"cut", "Do container isolation"},
+	//{"cutls", "List all cuts"},
+	//{"uncut", "Undo container isolation"},
+	{"clear", "Clear relationships of the two containers"},
+	{"show", "Show relationships of the two containers"},
+	{"connect", "Connect two containers"},
+	{"disconnect", "Disconnect two containers"},
 	{"version", "Show the daolinet version information"},
 }
 

@@ -2,6 +2,7 @@ package client
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"path"
 )
 
@@ -56,20 +57,22 @@ func (cli *Client) MemberRemove(name, group string) error {
 	return err
 }
 
-func (cli *Client) PolicyList() ([]string, error) {
-	var policy []string
-	resp, err := cli.get("/api/policy", nil, nil)
+func (cli *Client) PolicyShow(peer string) (string, error) {
+	resp, err := cli.get("/api/policy/"+peer, nil, nil)
 	if err != nil {
-		return policy, err
+		return "", err
 	}
 
-	err = json.NewDecoder(resp.body).Decode(&policy)
+	data, err := ioutil.ReadAll(resp.body)
 	ensureReaderClosed(resp)
-	return policy, err
+	return string(data), err
 }
 
-func (cli *Client) PolicyCreate(peer string) error {
-	resp, err := cli.post("/api/policy/"+peer, nil, nil, nil)
+func (cli *Client) PolicyUpdate(peer, action string) error {
+	body := map[string]string{
+		"action": action,
+	}
+	resp, err := cli.post("/api/policy/"+peer, nil, body, nil)
 	ensureReaderClosed(resp)
 	return err
 }
