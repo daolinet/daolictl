@@ -64,7 +64,7 @@ func (cli *DaoliCli) CmdClear(args ...string) error {
 		return err
 	}
 
-	fmt.Fprintf(cli.out, "%s\n", cmd.Arg(0))
+	fmt.Fprintf(cli.out, "%s\n", "CLEARED")
 	return nil
 }
 
