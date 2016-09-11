@@ -121,3 +121,14 @@ func (cli *Client) FirewallDelete(name string) error {
 	ensureReaderClosed(resp)
 	return err
 }
+
+func (cli *Client) ResetContainer(container string) (string, error) {
+	url := path.Join("/api/containers", container, "reset")
+	resp, err := cli.put(url, nil, nil, nil)
+        if err != nil {
+            return "", err 
+        }
+	data, err := ioutil.ReadAll(resp.body)
+	ensureReaderClosed(resp)
+	return string(data), err
+}

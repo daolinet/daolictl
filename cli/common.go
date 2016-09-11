@@ -39,6 +39,7 @@ var globalCommands = []Command{
 	//{"cutls", "List all cuts"},
 	//{"uncut", "Undo container isolation"},
 	{"clear", "Clear relationships of the two containers"},
+	{"container", "Commands for container."},
 	{"show", "Show relationships of the two containers"},
 	{"connect", "Connect two containers"},
 	{"disconnect", "Disconnect two containers"},

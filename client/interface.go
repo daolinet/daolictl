@@ -17,6 +17,7 @@ type APIClient interface {
 	FirewallShow(string) ([]Firewall, error)
 	FirewallCreate(Firewall) (Firewall, error)
 	FirewallDelete(string) error
+	ResetContainer(string) (string, error)
 }
 
 // Ensure that Client always implements APIClient.
