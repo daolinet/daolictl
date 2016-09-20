@@ -2,8 +2,8 @@ package client
 
 import (
 	"fmt"
-	/*"strings"
-	"text/tabwriter"*/
+	//"strings"
+	"text/tabwriter"
 
 	Cli "github.com/daolinet/daolictl/cli"
 )
@@ -18,7 +18,8 @@ func (cli *DaoliCli) CmdContainer(args ...string) error {
 
 //Usage: daolictl container reset <CONTAINER>
 func (cli *DaoliCli) CmdContainerReset(args ...string) error {
-	cmd := Cli.Subcmd("container reset", []string{"CONTAINER"}, "Rescheduler container to new container.", false)
+	cmd := Cli.Subcmd("container reset", []string{"[OPTIONS] CONTAINER"}, "Rescheduler container to new container.", false)
+        node := cmd.String("node", "", "Node id or name")
 	if err := ParseFlags(cmd, args, true); err != nil {
 		return err
 	}
@@ -28,12 +29,46 @@ func (cli *DaoliCli) CmdContainerReset(args ...string) error {
 		return nil
 	}
 
-	container, err := cli.client.ResetContainer(cmd.Arg(0))
+	container, err := cli.client.ResetContainer(cmd.Arg(0), *node)
 	if err != nil {
 		return err
 	}
 
         fmt.Fprintf(cli.out, "%s\n", container)
+	return nil
+}
+
+
+//Usage: daolictl container show <CONTAINER>
+func (cli *DaoliCli) CmdContainerShow(args ...string) error {
+	cmd := Cli.Subcmd("container show", []string{"CONTAINER"}, "Show container details.", false)
+	if err := ParseFlags(cmd, args, true); err != nil {
+		return err
+	}
+
+	if len(cmd.Args()) <= 0 {
+		cmd.Usage()
+		return nil
+	}
+
+	containerNetworks, err := cli.client.ShowContainer(cmd.Arg(0))
+	if err != nil {
+		return err
+	}
+
+        wr := tabwriter.NewWriter(cli.out, 20, 1, 3, ' ', 0)
+        fmt.Fprintln(wr, "IPADDRESS\tMACADDRESS\tGATEWAY\tNETWORKNAME\tVIPADDRESS")
+        for _, net := range containerNetworks {
+            fmt.Fprintf(wr, "%s\t%s\t%s\t%s\t%s",
+                        net.IPAddress,
+                        net.MacAddress,
+                        net.Gateway,
+                        net.NetworkName,
+                        net.VIPAddress,
+            )
+            fmt.Fprintf(wr, "\n")
+        }
+        wr.Flush()
 	return nil
 }
 
