@@ -122,13 +122,29 @@ func (cli *Client) FirewallDelete(name string) error {
 	return err
 }
 
-func (cli *Client) ResetContainer(container string) (string, error) {
+func (cli *Client) ResetContainer(container, node string) (string, error) {
+        var constraint = map[string]string{}
+        if node != "" {
+            constraint["node"] = node
+        }
 	url := path.Join("/api/containers", container, "reset")
-	resp, err := cli.put(url, nil, nil, nil)
+	resp, err := cli.put(url, nil, constraint, nil)
         if err != nil {
             return "", err 
         }
 	data, err := ioutil.ReadAll(resp.body)
 	ensureReaderClosed(resp)
 	return string(data), err
+}
+
+func (cli *Client) ShowContainer(container string) ([]ContainerNetwork, error) {
+    containerNetworks := []ContainerNetwork{}
+    url := path.Join("/api/containers", container)
+    resp, err := cli.get(url, nil, nil)
+    if err != nil {
+        return containerNetworks, err
+    }
+    err = json.NewDecoder(resp.body).Decode(&containerNetworks)
+    ensureReaderClosed(resp)
+    return containerNetworks, err
 }

@@ -9,4 +9,13 @@ type (
 		GatewayPort int
 		ServicePort int
 	}
+
+	ContainerNetwork struct {
+		Id          string
+		NetworkName string
+		IPAddress   string
+		MacAddress  string
+		Gateway     string
+		VIPAddress  string
+	}
 )
