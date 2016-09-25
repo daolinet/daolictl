@@ -77,20 +77,25 @@ func (cli *DaoliCli) CmdFirewallShow(args ...string) error {
 	return nil
 }
 
-// Usage: daolictl firewall create <NAME> --rule <GATEWAYPORT:SERVICEPORT> --container <CONTAINER>
+// Usage: daolictl firewall create <NAME> --rule <GATEWAYPORT:GATEWAYIP:SERVICEPORT> --container <CONTAINER>
 func (cli *DaoliCli) CmdFirewallCreate(args ...string) error {
 	cmd := Cli.Subcmd("firewall create", []string{"FIREWALL-NAME"},
 		"Creates a firewall rule with a given name", false)
-	rule := cmd.String("rule", "", "Add firewall mapping(format: <GATEWAYPORT>:<SERVICEPORT>")
+	rule := cmd.String("rule", "", "Add firewall mapping.(format: <SERVICEPORT>[:<GATEWAYIP>]:<GATEWAYPORT>)")
 	container := cmd.String("container", "", "Add firewall target")
 
 	if err := ParseFlags(cmd, args, true); err != nil {
 		return err
 	}
 
+        var gip, gportStr string
 	parts := strings.Split(*rule, ":")
-	if len(parts) != 2 {
-		fmt.Fprintf(cli.err, "--rule %s format is <GATEWAYPORT:SERVICEPORT>", *rule)
+	if len(parts) == 2 {
+            gportStr = parts[1]
+        } else if len(parts) == 3 {
+            gip, gportStr = parts[1], parts[2]
+        } else {
+		fmt.Fprintf(cli.err, "--rule %s format is <SERVICEPORT>[:<GATEWAYIP>]:<GATEWAYPORT>", *rule)
 		cmd.Usage()
 		return nil
 	}
@@ -100,19 +105,20 @@ func (cli *DaoliCli) CmdFirewallCreate(args ...string) error {
 		return nil
 	}
 
-	gport, err := strconv.Atoi(parts[0])
+	sport, err := strconv.Atoi(parts[0])
 	if err != nil {
-		return fmt.Errorf("GATEWAYPORT (%s) must be available number", parts[0])
+		return fmt.Errorf("SERVICEPORT (%s) must be available number", parts[0])
 	}
 
-	sport, err := strconv.Atoi(parts[1])
+	gport, err := strconv.Atoi(gportStr)
 	if err != nil {
-		return fmt.Errorf("SERVICEPORT (%s) must be available number", parts[1])
+		return fmt.Errorf("GATEWAYPORT (%s) must be available number", gportStr)
 	}
 
 	fw := Firewall{
 		Name:        cmd.Arg(0),
 		Container:   *container,
+		GatewayIP:   gip,
 		GatewayPort: gport,
 		ServicePort: sport,
 	}
