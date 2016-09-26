@@ -16,9 +16,9 @@ func (cli *DaoliCli) CmdContainer(args ...string) error {
 	return err
 }
 
-//Usage: daolictl container reset <CONTAINER>
-func (cli *DaoliCli) CmdContainerReset(args ...string) error {
-	cmd := Cli.Subcmd("container reset", []string{"[OPTIONS] CONTAINER"}, "Rescheduler container to new container.", false)
+//Usage: daolictl container move <CONTAINER>
+func (cli *DaoliCli) CmdContainerMove(args ...string) error {
+	cmd := Cli.Subcmd("container move", []string{"[OPTIONS] CONTAINER"}, "Rescheduler container to new container.", false)
         node := cmd.String("node", "", "Node id or name")
 	if err := ParseFlags(cmd, args, true); err != nil {
 		return err
@@ -39,9 +39,9 @@ func (cli *DaoliCli) CmdContainerReset(args ...string) error {
 }
 
 
-//Usage: daolictl container show <CONTAINER>
+//Usage: daolictl container shownet <CONTAINER>
 func (cli *DaoliCli) CmdContainerShow(args ...string) error {
-	cmd := Cli.Subcmd("container show", []string{"CONTAINER"}, "Show container details.", false)
+	cmd := Cli.Subcmd("container shownet", []string{"CONTAINER"}, "Show container network details.", false)
 	if err := ParseFlags(cmd, args, true); err != nil {
 		return err
 	}
@@ -75,8 +75,8 @@ func (cli *DaoliCli) CmdContainerShow(args ...string) error {
 
 func containerUsage() string {
 	containerCommands := map[string]string{
-		"reset":   "Rescheduler container.",
-		"show":    "Show container info.",
+		"move":   "Rescheduler container.",
+		"shownet":    "Show container network info.",
 	}
 
 	help := "Commands:\n"
