@@ -40,7 +40,7 @@ func (cli *DaoliCli) CmdContainerMove(args ...string) error {
 
 
 //Usage: daolictl container shownet <CONTAINER>
-func (cli *DaoliCli) CmdContainerShow(args ...string) error {
+func (cli *DaoliCli) CmdContainerShownet(args ...string) error {
 	cmd := Cli.Subcmd("container shownet", []string{"CONTAINER"}, "Show container network details.", false)
 	if err := ParseFlags(cmd, args, true); err != nil {
 		return err
